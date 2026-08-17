@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  html, body { margin:0; padding:0; background:#04070d; }
+  body { overflow-x:hidden; }
+  * { box-sizing:border-box; }
+  a { color:#7FE0FF; text-decoration:none; }
+  a:hover { color:#ffffff; }
+  ::selection { background:#0E6E92; color:#fff; }
+  @keyframes scrollHint { 0%{transform:translateY(0);opacity:.15} 40%{opacity:1} 100%{transform:translateY(14px);opacity:0} }
+  @keyframes slowPulse { 0%,100%{opacity:.35} 50%{opacity:.9} }
+  @keyframes gridDrift { from{background-position:0 0} to{background-position:0 -60px} }
+  .figma-header { position:fixed; top:0; right:0; left:0; z-index:50; min-height:92px; display:flex; align-items:center; justify-content:space-between; gap:32px; padding:24px clamp(28px,5.21vw,100px); background:rgba(10,10,10,.08); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); transition:background .3s ease; }
+  .figma-brand { min-width:270px; display:flex; align-items:center; flex:0 0 auto; }
+  .figma-brand-link { display:flex; align-items:center; gap:14px; min-width:340px; color:#fff; }
+  .figma-brand-logo { width:234px; height:38px; object-fit:contain; display:block; }
+  .figma-brand-divider { width:1px; height:32px; flex:0 0 1px; background:rgba(255,255,255,.4); }
+  .figma-brand-copy { width:170px; display:flex; flex-direction:column; align-items:flex-end; gap:1px; white-space:nowrap; }
+  .figma-brand-copy strong { color:#fff; font-size:11.2px; line-height:16.2px; font-weight:500; }
+  .figma-brand-copy small { color:#ba9027; font-size:9.3px; line-height:14px; font-weight:500; direction:ltr; }
+  .figma-nav { display:flex; align-items:center; justify-content:center; gap:24px; white-space:nowrap; flex:0 0 auto; }
+  .figma-nav a { color:rgba(255,255,255,.8); font-size:14px; line-height:21px; font-weight:500; transition:color .2s ease; }
+  .figma-nav a:hover { color:#fff; }
+  .figma-actions { display:flex; align-items:center; gap:16px; direction:ltr; white-space:nowrap; flex:0 0 auto; }
+  .figma-pill { min-height:44px; display:inline-flex; align-items:center; justify-content:center; padding:9px 18px; border:1px solid rgba(255,255,255,.13); border-radius:999px; background:rgba(255,255,255,.08); color:#fff; font:500 14px/21px 'IBM Plex Sans Arabic',system-ui,sans-serif; cursor:pointer; transition:background .2s ease,border-color .2s ease,transform .2s ease; }
+  .figma-pill:hover { color:#fff; background:rgba(255,255,255,.14); border-color:rgba(255,255,255,.25); transform:translateY(-1px); }
+  .figma-pill--icon { width:44px; padding:9px 12px; }
+  .figma-pill--icon img { width:18px; height:24px; display:block; }
+  .figma-pill--portal { border-color:#b59667; background:#b59667; box-shadow:0 12px 14px rgba(181,150,103,.2); direction:rtl; }
+  .figma-pill--portal:hover { background:#c1a174; border-color:#c1a174; }
+  .figma-header .legacy-header { display:none !important; }
+  @media (max-width:1500px) {
+    .figma-header { gap:22px; padding-inline:32px; }
+    .figma-nav { gap:15px; }
+    .figma-brand-logo { width:190px; height:32px; }
+    .figma-brand-link { min-width:0; gap:10px; }
+    .figma-brand { min-width:0; }
+    .figma-actions { gap:10px; }
+  }
+  @media (max-width:1280px) {
+    .figma-header { min-height:80px; padding-block:18px; }
+    .figma-nav { display:none; }
+  }
+  @media (max-width:760px) {
+    .figma-header { min-height:72px; padding:14px 18px; gap:14px; }
+    .figma-brand-copy,.figma-brand-divider { display:none; }
+    .figma-brand-logo { width:156px; height:25px; }
+    .figma-actions { gap:7px; }
+    .figma-pill { min-height:40px; padding:7px 12px; font-size:12px; }
+    .figma-pill--icon { width:40px; padding-inline:11px; }
+    .figma-pill--portal { display:none; }
+  }
+  @media (max-width:430px) {
+    .figma-header { padding-inline:12px; }
+    .figma-brand-logo { width:132px; height:22px; }
+    .figma-pill--icon { display:none; }
+  }
+</style>
+</helmet>
+
+<div ref="{{ rootRef }}" dir="rtl" style="position:relative; background:#04070d; color:#EAF3F7; font-family:'IBM Plex Sans Arabic',system-ui,sans-serif; cursor:none">
+
+
+  <canvas ref="{{ fxRef }}" style="position:fixed; inset:0; width:100%; height:100%; z-index:40; pointer-events:none"></canvas>
+  <div ref="{{ ringRef }}" style="position:fixed; top:0; left:0; z-index:70; width:38px; height:38px; margin:-19px 0 0 -19px; border:1px solid rgba(140,225,255,.55); border-radius:50%; pointer-events:none; mix-blend-mode:screen; transition:width .25s ease, height .25s ease, margin .25s ease, border-color .25s ease"></div>
+  <div ref="{{ dotRef }}" style="position:fixed; top:0; left:0; z-index:71; width:5px; height:5px; margin:-2.5px 0 0 -2.5px; border-radius:50%; background:#9EEBFF; pointer-events:none; mix-blend-mode:screen"></div>
+
+  <header class="figma-header">
+    <div class="figma-brand">
+      <a class="figma-brand-link" data-hover="1" href="#journey" aria-label="Weapons and Hazardous Materials Office home">
+        <img class="figma-brand-logo" src="assets/scns-logo.png" alt="The Supreme Council for National Security">
+        <span class="figma-brand-divider" aria-hidden="true"></span>
+        <span class="figma-brand-copy">
+          <strong>مكتب الأسلحة والمواد الخطرة</strong>
+          <small>Weapons &amp; Hazardous Materials Office</small>
+        </span>
+      </a>
+    </div>
+
+    <nav class="figma-nav" aria-label="Primary navigation">
+      <a data-hover="1" href="#journey">عن المكتب</a>
+      <a data-hover="1" href="#journey">الخدمات</a>
+      <a data-hover="1" href="#journey">القائمة الوطنية</a>
+      <a data-hover="1" href="#journey">التشريعات والمعايير</a>
+      <a data-hover="1" href="#journey">المستجدات</a>
+      <a data-hover="1" href="#journey">المزيد</a>
+    </nav>
+
+    <div class="figma-actions">
+      <button class="figma-pill figma-pill--icon" data-hover="1" type="button" aria-label="Accessibility">
+        <img src="assets/accessibility.svg" alt="">
+      </button>
+      <button class="figma-pill" data-hover="1" type="button">English</button>
+      <a class="figma-pill figma-pill--portal" data-hover="1" href="#journey">بوابة حكومة الإمارات</a>
+    </div>
+
+    <div class="legacy-header" hidden style="display:none !important">
+    <!-- Brand / Identity -->
+    <div style="display:flex; align-items:center; gap:14px">
+      <div style="width:42px; height:42px; border-radius:12px; background:linear-gradient(135deg,rgba(92,211,245,.15),rgba(201,162,39,.12)); border:1px solid rgba(140,225,255,.4); display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden; box-shadow:0 0 16px rgba(92,211,245,.12)">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#5CD3F5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          <path d="m9 12 2 2 4-4" stroke="#C9A227" stroke-width="2"/>
+        </svg>
+        <div style="position:absolute; top:3px; right:3px; width:5px; height:5px; background:#5CD3F5; border-radius:50%; animation:slowPulse 2.8s ease-in-out infinite"></div>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:2px">
+        <div style="font-size:14px; font-weight:700; color:#EAF3F7; letter-spacing:.01em">مكتب الأسلحة والمواد الخطرة</div>
+        <div style="font-size:10px; font-weight:300; letter-spacing:.05em; color:#7E97A5">المجلس الأعلى للأمن الوطني · دولة الإمارات العربية المتحدة</div>
+      </div>
+    </div>
+
+    <!-- Navigation Menu (Pill Dock) -->
+    <nav style="display:flex; align-items:center; gap:4px; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.08); border-radius:999px; padding:4px 8px">
+      <a data-hover="1" href="#journey" style="padding:7px 16px; border-radius:999px; font-size:12.5px; font-weight:600; color:#9EEBFF; background:rgba(92,211,245,.14); border:1px solid rgba(92,211,245,.35); transition:all .25s ease">الرئيسية</a>
+      <a data-hover="1" href="#journey" style="padding:7px 14px; border-radius:999px; font-size:12.5px; font-weight:400; color:#B7CBD5; transition:all .25s ease">عن المكتب</a>
+      <a data-hover="1" href="#journey" style="padding:7px 14px; border-radius:999px; font-size:12.5px; font-weight:400; color:#B7CBD5; transition:all .25s ease">المبادرات</a>
+      <a data-hover="1" href="#journey" style="padding:7px 14px; border-radius:999px; font-size:12.5px; font-weight:400; color:#B7CBD5; transition:all .25s ease">القائمة الوطنية</a>
+      <a data-hover="1" href="#journey" style="padding:7px 14px; border-radius:999px; font-size:12.5px; font-weight:400; color:#B7CBD5; transition:all .25s ease">المركز الإعلامي</a>
+      <a data-hover="1" href="#journey" style="padding:7px 14px; border-radius:999px; font-size:12.5px; font-weight:400; color:#B7CBD5; transition:all .25s ease">تواصل معنا</a>
+    </nav>
+
+    <!-- Actions & Tools -->
+    <div style="display:flex; align-items:center; gap:12px">
+      <!-- Search Button -->
+      <button data-hover="1" type="button" aria-label="بحث" style="width:36px; height:36px; border-radius:50%; border:1px solid rgba(255,255,255,.1); background:rgba(255,255,255,.04); display:flex; align-items:center; justify-content:center; color:#B7CBD5; cursor:pointer; transition:all .25s">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+      </button>
+
+      <!-- Language Switcher -->
+      <button data-hover="1" type="button" style="display:flex; align-items:center; gap:6px; font-size:11.5px; font-weight:600; color:#CBDCE4; padding:7px 14px; border:1px solid rgba(255,255,255,.12); border-radius:999px; background:rgba(255,255,255,.03); cursor:pointer; transition:all .25s">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#5CD3F5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="2" y1="12" x2="22" y2="12"></line>
+          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+        </svg>
+        <span>EN</span>
+      </button>
+
+      <!-- Portal / Action Button -->
+      <a data-hover="1" href="#journey" style="display:inline-flex; align-items:center; gap:8px; padding:9px 20px; border-radius:999px; font-size:12.5px; font-weight:600; background:linear-gradient(135deg,rgba(92,211,245,.2),rgba(14,110,146,.4)); border:1px solid rgba(140,225,255,.45); color:#EAF3F7; box-shadow:0 0 20px rgba(92,211,245,.14); transition:all .3s ease">
+        <span>بوابة الخدمات</span>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#5CD3F5" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="transform:rotate(180deg)">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </a>
+    </div>
+    </div>
+  </header>
+
+  <section id="journey" ref="{{ filmRef }}" style="position:relative; height:760vh">
+    <div style="position:sticky; top:0; height:100vh; overflow:hidden">
+      <canvas ref="{{ bgRef }}" style="position:absolute; inset:0; width:100%; height:100%; display:block"></canvas>
+      <div style="position:absolute; inset:0; background:radial-gradient(120% 80% at 50% 40%, rgba(4,7,13,0) 30%, rgba(4,7,13,.72) 100%)"></div>
+      <div style="position:absolute; inset:0; background:linear-gradient(180deg,rgba(4,7,13,.6) 0%,rgba(4,7,13,0) 28%,rgba(4,7,13,0) 62%,rgba(4,7,13,.88) 100%)"></div>
+
+      <div data-chapter="1" data-in="-0.06" data-out="0.14" data-hero="1" style="position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:26px; text-align:center; padding:0 6vw">
+        <div style="font-size:11.5px; letter-spacing:.4em; color:#7FE0FF; font-weight:500">ABU DHABI CYBER JOURNEY</div>
+        <h1 style="margin:0; font-size:clamp(38px,6.4vw,96px); font-weight:200; line-height:1.18; letter-spacing:-.01em; text-wrap:balance">أمنٌ رقميٌّ<br><span style="font-weight:600">يحمي الوطن</span></h1>
+        <p style="margin:0; max-width:560px; font-size:clamp(14px,1.25vw,18px); font-weight:300; line-height:2; color:#B7CBD5; text-wrap:pretty">رحلة داخل المنظومة التي تحرس البنية الحيوية لدولة الإمارات — من الرصد الأول للإشارة، إلى الاستجابة قبل وقوع الأثر.</p>
+        <div style="display:flex; flex-direction:column; align-items:center; gap:10px; margin-top:24px">
+          <div style="font-size:10.5px; letter-spacing:.3em; color:#5E7C8C">مرّر للأسفل</div>
+          <div style="width:1px; height:46px; background:linear-gradient(180deg,#5CD3F5,transparent); animation:scrollHint 2.2s ease-in-out infinite"></div>
+        </div>
+      </div>
+
+      <div data-chapter="2" data-in="0.15" data-out="0.33" style="position:absolute; inset:0; display:flex; align-items:center; justify-content:flex-start; padding:0 7vw">
+        <div style="max-width:520px; display:flex; flex-direction:column; gap:20px">
+          <div style="display:flex; align-items:center; gap:12px"><span style="font-size:11px; letter-spacing:.3em; color:#7FE0FF">٠١</span><span style="width:44px; height:1px; background:rgba(127,224,255,.45)"></span></div>
+          <h2 style="margin:0; font-size:clamp(28px,3.6vw,52px); font-weight:300; line-height:1.35">المدينة تنام… <span style="font-weight:600">والشبكة لا تنام</span></h2>
+          <p style="margin:0; font-size:clamp(14px,1.15vw,17px); font-weight:300; line-height:2.1; color:#B7CBD5; text-wrap:pretty">خلف كل ضوءٍ في أبوظبي بنيةٌ رقميةٌ تعمل بلا توقف: طاقة، مياه، نقل، واتصالات. حمايتها ليست خيارًا تقنيًا، بل شرطٌ لاستمرار الحياة اليومية.</p>
+        </div>
+      </div>
+
+      <div data-chapter="3" data-in="0.35" data-out="0.53" style="position:absolute; inset:0; display:flex; align-items:flex-end; justify-content:flex-end; padding:0 7vw 14vh">
+        <div style="max-width:540px; display:flex; flex-direction:column; gap:20px; text-align:left; direction:rtl">
+          <div style="display:flex; align-items:center; gap:12px"><span style="font-size:11px; letter-spacing:.3em; color:#7FE0FF">٠٢</span><span style="width:44px; height:1px; background:rgba(127,224,255,.45)"></span></div>
+          <h2 style="margin:0; font-size:clamp(28px,3.6vw,52px); font-weight:300; line-height:1.35">درعٌ فوق <span style="font-weight:600">البنية الحيوية</span></h2>
+          <p style="margin:0; font-size:clamp(14px,1.15vw,17px); font-weight:300; line-height:2.1; color:#B7CBD5; text-wrap:pretty">منظومة وطنية موحّدة تراقب المنشآت الحساسة وتتبادل الإنذار المبكر مع الجهات الشريكة، فتغلق الثغرة قبل أن تتحول إلى حادث.</p>
+        </div>
+      </div>
+
+      <div data-chapter="4" data-in="0.55" data-out="0.74" style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; padding:0 7vw">
+        <div style="max-width:620px; display:flex; flex-direction:column; gap:20px; text-align:center; align-items:center">
+          <div style="display:flex; align-items:center; gap:12px"><span style="font-size:11px; letter-spacing:.3em; color:#7FE0FF">٠٣</span><span style="width:44px; height:1px; background:rgba(127,224,255,.45)"></span></div>
+          <h2 style="margin:0; font-size:clamp(28px,3.8vw,56px); font-weight:300; line-height:1.35">من الرصد <span style="font-weight:600">إلى الاستباق</span></h2>
+          <p style="margin:0; font-size:clamp(14px,1.15vw,17px); font-weight:300; line-height:2.1; color:#B7CBD5; text-wrap:pretty">الذكاء الاصطناعي يقرأ ملايين الإشارات يوميًا، يتعلّم النمط الطبيعي للشبكة، ويكشف الانحراف الصامت قبل أن يظهر أثره على الأرض.</p>
+        </div>
+      </div>
+
+      <div data-chapter="5" data-in="0.76" data-out="0.99" style="position:absolute; inset:0; display:flex; align-items:center; justify-content:flex-start; padding:0 7vw">
+        <div style="max-width:520px; display:flex; flex-direction:column; gap:20px">
+          <div style="display:flex; align-items:center; gap:12px"><span style="font-size:11px; letter-spacing:.3em; color:#7FE0FF">٠٤</span><span style="width:44px; height:1px; background:rgba(127,224,255,.45)"></span></div>
+          <h2 style="margin:0; font-size:clamp(28px,3.6vw,52px); font-weight:300; line-height:1.35">وطنٌ متصل… <span style="font-weight:600">ومحميّ</span></h2>
+          <p style="margin:0; font-size:clamp(14px,1.15vw,17px); font-weight:300; line-height:2.1; color:#B7CBD5; text-wrap:pretty">من المنشآت الحيوية إلى تداول المواد الخطرة، سلسلةُ حمايةٍ واحدة لا تنقطع — حوكمةٌ وتشريعٌ وتقنيةٌ وشراكاتٌ دولية.</p>
+        </div>
+      </div>
+
+      <div style="position:absolute; bottom:34px; right:7vw; left:7vw; display:flex; align-items:center; gap:16px">
+        <div style="font-size:10px; letter-spacing:.24em; color:#5E7C8C; font-variant-numeric:tabular-nums; direction:ltr; unicode-bidi:isolate" ref="{{ pgRef }}">00 / 04</div>
+        <div style="flex:1; height:1px; background:rgba(255,255,255,.12); position:relative">
+          <div ref="{{ progRef }}" style="position:absolute; top:0; right:0; height:1px; width:0%; background:linear-gradient(270deg,#5CD3F5,rgba(92,211,245,.15))"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;accentColor&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#5CD3F5&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;options&quot;:[&quot;#5CD3F5&quot;,&quot;#7BE0C0&quot;,&quot;#C9A227&quot;,&quot;#8FA8FF&quot;],&quot;section&quot;:&quot;المظهر&quot;},&quot;particlesOn&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;التأثيرات&quot;},&quot;particleDensity&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:90,&quot;min&quot;:30,&quot;max&quot;:160,&quot;step&quot;:10,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;التأثيرات&quot;}}">
+class Component extends DCLogic {
+  constructor(p){
+    super(p);
+    const R = () => React.createRef();
+    this.rootRef=R(); this.bgRef=R(); this.fxRef=R(); this.filmRef=R();
+    this.ringRef=R(); this.dotRef=R();
+    this.progRef=R(); this.pgRef=R();
+    this.p=0; this.target=0; this.imgs=[]; this.loaded=0;
+    this.mouse={x:-999,y:-999,sx:-999,sy:-999,rx:-999,ry:-999};
+    this.parallax={x:0,y:0};
+  }
+  get N(){ return 241; }
+  get accent(){ return this.props.accentColor || '#5CD3F5'; }
+
+  componentDidMount(){
+    this.mounted = true;
+    this.setupCanvas();
+    this.loadFrames();
+    this.buildParticles();
+    this.bind();
+    this.observe();
+    this.p = this.target = this.filmProgress();
+    this.updateChapters();
+    this.onScroll = () => {
+      this.target = this.filmProgress();
+      if (document.hidden || !this.rafAlive){ this.p = this.target; this.updateChapters(); this.drawFrame(); }
+    };
+    window.addEventListener('scroll', this.onScroll, true);
+    this.loop();
+  }
+  componentWillUnmount(){
+    this.mounted = false;
+    cancelAnimationFrame(this.raf);
+    window.removeEventListener('resize', this.onResize);
+    window.removeEventListener('mousemove', this.onMove, true);
+    window.removeEventListener('scroll', this.onScroll, true);
+    if (this.io) this.io.disconnect();
+  }
+
+  setupCanvas(){
+    this.onResize = () => {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      [this.bgRef.current, this.fxRef.current].forEach(c => {
+        if(!c) return;
+        const r = c.getBoundingClientRect();
+        c.width = Math.max(1, Math.round(r.width * dpr));
+        c.height = Math.max(1, Math.round(r.height * dpr));
+        c.__dpr = dpr; c.__w = r.width; c.__h = r.height;
+      });
+    };
+    this.onResize();
+    window.addEventListener('resize', this.onResize);
+  }
+
+  loadFrames(){
+    for (let i=1; i<=this.N; i++){
+      const im = new Image();
+      im.onload = () => {
+        this.loaded++;
+        if (this.loaded === 1){
+          this.drawFrame();
+        }
+      };
+      im.onerror = im.onload;
+      im.src = 'frames/frame_' + String(i).padStart(4,'0') + '.png';
+      this.imgs.push(im);
+    }
+  }
+
+  buildParticles(){
+    const density = this.props.particleDensity ?? 90;
+    const w = window.innerWidth, h = window.innerHeight;
+    this.parts = [];
+    for (let i=0; i<density; i++){
+      this.parts.push({
+        x: Math.random()*w, y: Math.random()*h,
+        vx: (Math.random()-.5)*0.22, vy: (Math.random()-.5)*0.22,
+        r: Math.random()*1.5 + 0.5,
+        ph: Math.random()*Math.PI*2
+      });
+    }
+  }
+
+  bind(){
+    this.onMove = (e) => {
+      this.mouse.x = e.clientX; this.mouse.y = e.clientY;
+      this.parallax.x = (e.clientX / window.innerWidth - .5);
+      this.parallax.y = (e.clientY / window.innerHeight - .5);
+      const t = e.target;
+      const hov = t && t.closest && t.closest('[data-hover]');
+      const ring = this.ringRef.current;
+      if (ring){
+        if (hov && !this.hovering){ this.hovering = true; ring.style.width='64px'; ring.style.height='64px'; ring.style.margin='-32px 0 0 -32px'; ring.style.borderColor='rgba(158,235,255,.9)'; }
+        else if (!hov && this.hovering){ this.hovering = false; ring.style.width='38px'; ring.style.height='38px'; ring.style.margin='-19px 0 0 -19px'; ring.style.borderColor='rgba(140,225,255,.55)'; }
+      }
+    };
+    window.addEventListener('mousemove', this.onMove, true);
+  }
+
+  observe(){
+    const root = this.rootRef.current;
+    if (!root) return;
+    root.querySelectorAll('[data-reveal]').forEach((el,i) => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(26px)';
+      el.style.transition = 'opacity .9s cubic-bezier(.2,.7,.2,1) ' + (i%4)*0.07 + 's, transform 1s cubic-bezier(.2,.7,.2,1) ' + (i%4)*0.07 + 's';
+    });
+    this.io = new IntersectionObserver(es => {
+      es.forEach(e => {
+        if (e.isIntersecting){ e.target.style.opacity='1'; e.target.style.transform='none'; this.io.unobserve(e.target); }
+      });
+    }, { threshold: 0.18 });
+    root.querySelectorAll('[data-reveal]').forEach(el => this.io.observe(el));
+    root.querySelectorAll('[data-card]').forEach(el => {
+      el.addEventListener('mouseenter', () => { el.style.borderColor='rgba(140,225,255,.42)'; el.style.transform='translateY(-6px)'; });
+      el.addEventListener('mouseleave', () => { el.style.borderColor='rgba(255,255,255,.09)'; el.style.transform='none'; });
+    });
+    this.chapters = Array.from(root.querySelectorAll('[data-chapter]')).map(el => ({
+      el, in: parseFloat(el.dataset.in), out: parseFloat(el.dataset.out)
+    }));
+  }
+
+  filmProgress(){
+    const el = this.filmRef.current;
+    if (!el) return 0;
+    const r = el.getBoundingClientRect();
+    const span = r.height - window.innerHeight;
+    if (span <= 0) return 0;
+    return Math.max(0, Math.min(1, -r.top / span));
+  }
+
+  drawFrame(){
+    const c = this.bgRef.current;
+    if (!c || !this.imgs.length) return;
+    const ctx = c.getContext('2d');
+    const dpr = c.__dpr || 1, W = c.__w || 1, H = c.__h || 1;
+    const idx = Math.max(0, Math.min(this.N-1, Math.round(this.p * (this.N-1))));
+    let img = this.imgs[idx];
+    if (!img || !img.naturalWidth){
+      for (let d = 1; d < this.N; d++){
+        if (idx - d >= 0 && this.imgs[idx - d]?.naturalWidth){ img = this.imgs[idx - d]; break; }
+        if (idx + d < this.N && this.imgs[idx + d]?.naturalWidth){ img = this.imgs[idx + d]; break; }
+      }
+    }
+    if (!img || !img.naturalWidth) return;
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+    ctx.clearRect(0,0,W,H);
+    const zoom = 1.08 + Math.sin(this.p*Math.PI)*0.05;
+    const px = this.parallax.x * 26, py = this.parallax.y * 18;
+    const s = Math.max(W/img.naturalWidth, H/img.naturalHeight) * zoom;
+    const dw = img.naturalWidth*s, dh = img.naturalHeight*s;
+    ctx.drawImage(img, (W-dw)/2 - px, (H-dh)/2 - py, dw, dh);
+  }
+
+  drawParticles(){
+    const c = this.fxRef.current;
+    if (!c || !this.parts) return;
+    const ctx = c.getContext('2d');
+    const dpr = c.__dpr || 1, W = c.__w || 1, H = c.__h || 1;
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.clearRect(0,0,W,H);
+    const mx = this.mouse.x, my = this.mouse.y;
+    const acc = this.accent;
+    const ps = this.parts;
+    for (const p of ps){
+      p.x += p.vx; p.y += p.vy; p.ph += 0.01;
+      const dx = mx - p.x, dy = my - p.y;
+      const d2 = dx*dx + dy*dy;
+      if (d2 < 42000 && d2 > 1){
+        const f = (1 - d2/42000) * 0.55;
+        const d = Math.sqrt(d2);
+        p.x += (dx/d) * f; p.y += (dy/d) * f;
+      }
+      if (p.x < -20) p.x = W+20; if (p.x > W+20) p.x = -20;
+      if (p.y < -20) p.y = H+20; if (p.y > H+20) p.y = -20;
+    }
+    ctx.lineWidth = 0.6;
+    for (let i=0;i<ps.length;i++){
+      for (let j=i+1;j<ps.length;j++){
+        const a=ps[i], b=ps[j];
+        const dx=a.x-b.x, dy=a.y-b.y, d2=dx*dx+dy*dy;
+        if (d2 < 15000){
+          const al = (1 - d2/15000) * 0.16;
+          ctx.strokeStyle = this.rgba(acc, al);
+          ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
+        }
+      }
+    }
+    for (const p of ps){
+      const dx = mx-p.x, dy = my-p.y, d2 = dx*dx+dy*dy;
+      const near = d2 < 42000;
+      if (near){
+        ctx.strokeStyle = this.rgba(acc, (1 - d2/42000) * 0.32);
+        ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(mx,my); ctx.stroke();
+      }
+      const tw = 0.4 + Math.sin(p.ph)*0.22 + (near ? 0.35 : 0);
+      ctx.fillStyle = this.rgba(acc, Math.min(0.95, tw));
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.r * (near ? 1.7 : 1), 0, 6.283); ctx.fill();
+    }
+  }
+
+  rgba(hex, a){
+    const h = hex.replace('#','');
+    const n = parseInt(h.length===3 ? h.split('').map(c=>c+c).join('') : h, 16);
+    return 'rgba(' + ((n>>16)&255) + ',' + ((n>>8)&255) + ',' + (n&255) + ',' + a.toFixed(3) + ')';
+  }
+
+  updateChapters(){
+    if (!this.chapters) return;
+    let active = 0;
+    this.chapters.forEach((ch, i) => {
+      const span = ch.out - ch.in;
+      const t = (this.p - ch.in) / span;
+      let o = 0;
+      const hero = el0 => ch.el.dataset.hero === '1';
+      if (ch.el.dataset.hero === '1'){
+        o = t > 0.72 ? Math.max(0, (1-t)/0.28) : 1;
+      } else if (t > -0.25 && t < 1.25){
+        o = t < 0.28 ? Math.max(0, t/0.28) : (t > 0.78 ? Math.max(0, (1-t)/0.22) : 1);
+      }
+      o = Math.max(0, Math.min(1, o));
+      if (o > 0.4) active = i;
+      const el = ch.el;
+      el.style.opacity = o.toFixed(3);
+      el.style.transform = 'translateY(' + ((1-o) * 34).toFixed(1) + 'px) scale(' + (0.985 + o*0.015).toFixed(4) + ')';
+      el.style.filter = o > 0.98 ? 'none' : 'blur(' + ((1-o)*7).toFixed(2) + 'px)';
+      el.style.pointerEvents = o > 0.5 ? 'auto' : 'none';
+    });
+    if (this.progRef.current) this.progRef.current.style.width = (this.p*100).toFixed(2) + '%';
+    if (this.pgRef.current){
+      const label = String(Math.min(4, active)).padStart(2,'0') + ' / 04';
+      if (this.pgRef.current.textContent !== label) this.pgRef.current.textContent = label;
+    }
+  }
+
+  loop = () => {
+    if (!this.mounted) return;
+    this.raf = requestAnimationFrame(this.loop);
+    this.rafAlive = true;
+    this.target = this.filmProgress();
+    this.p += (this.target - this.p) * 0.085;
+    const m = this.mouse;
+    m.sx += (m.x - m.sx) * 0.16;
+    m.sy += (m.y - m.sy) * 0.16;
+    m.rx += (m.x - m.rx) * 0.5;
+    m.ry += (m.y - m.ry) * 0.5;
+    if (this.ringRef.current) this.ringRef.current.style.transform = 'translate(' + m.sx.toFixed(1) + 'px,' + m.sy.toFixed(1) + 'px)';
+    if (this.dotRef.current) this.dotRef.current.style.transform = 'translate(' + m.rx.toFixed(1) + 'px,' + m.ry.toFixed(1) + 'px)';
+    this.drawFrame();
+    this.updateChapters();
+    if (this.props.particlesOn !== false) this.drawParticles();
+    else { const c=this.fxRef.current; if(c){ const x=c.getContext('2d'); x.setTransform(1,0,0,1,0,0); x.clearRect(0,0,c.width,c.height);} }
+  }
+
+  renderVals(){
+    return {
+      rootRef: this.rootRef, bgRef: this.bgRef, fxRef: this.fxRef, filmRef: this.filmRef,
+      ringRef: this.ringRef, dotRef: this.dotRef,
+      progRef: this.progRef, pgRef: this.pgRef
+    };
+  }
+}
+</script>
+</body>
+</html>

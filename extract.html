@@ -1,0 +1,18 @@
+<!doctype html><html><head><meta charset="utf-8"><style>html,body{margin:0;background:#000;overflow:hidden}#c{display:block;position:fixed;inset:0;width:100vw;height:100vh}</style></head>
+<body>
+<canvas id="c"></canvas>
+<video id="v" src="uploads/Abu Dhabi Cyber Journey_2.mp4" muted playsinline preload="auto" style="position:fixed;left:-9999px;width:10px"></video>
+<script>
+const v=document.getElementById('v'), c=document.getElementById('c'), x=c.getContext('2d');
+window.info={};
+v.addEventListener('loadeddata',()=>{window.info={d:v.duration,w:v.videoWidth,h:v.videoHeight,ready:true};});
+v.addEventListener('error',()=>{window.info={err:v.error&&v.error.code};});
+v.addEventListener('seeked',draw);
+window.seekTo=t=>{v.currentTime=t;return t;};
+function draw(){ // fill canvas exactly with video (stretch) at fixed 16:9 box
+  c.width=v.videoWidth; c.height=v.videoHeight;
+  c.style.width='100vw'; c.style.height='100vh';
+  x.drawImage(v,0,0,c.width,c.height);
+}
+window.grab=()=>c.toDataURL('image/jpeg',0.82);
+</script></body></html>
