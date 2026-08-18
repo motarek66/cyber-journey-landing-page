@@ -278,18 +278,22 @@ class Component extends DCLogic {
   }
 
   loadFrames(){
-    for (let i=1; i<=this.N; i++){
-      const im = new Image();
-      im.onload = () => {
-        this.loaded++;
-        if (this.loaded === 1){
-          this.drawFrame();
-        }
-      };
-      im.onerror = im.onload;
-      im.src = 'frames/frame_' + String(i).padStart(4,'0') + '.png';
-      this.imgs.push(im);
+    const startIdx = Math.round(this.filmProgress() * (this.N - 1));
+    const order = [startIdx];
+    for (let d = 1; d < this.N; d++){
+      if (startIdx - d >= 0) order.push(startIdx - d);
+      if (startIdx + d < this.N) order.push(startIdx + d);
     }
+    this.imgs = new Array(this.N);
+    order.forEach(idx => {
+      const im = new Image();
+      im.onload = im.onerror = () => {
+        this.loaded++;
+        if (this.loaded === 1) this.drawFrame();
+      };
+      im.src = 'frames/frame_' + String(idx + 1).padStart(4,'0') + '.webp';
+      this.imgs[idx] = im;
+    });
   }
 
   buildParticles(){
